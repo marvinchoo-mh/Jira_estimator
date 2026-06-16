@@ -1,5 +1,12 @@
 # Changelog
 
+## Phase 4 — Estimation Logic
+- Added src/estimate_ticket.py
+- Calculates suggested story points via median of similar tickets
+- Calculates cycle time range via 25th–75th percentile
+- Confidence scoring: High/Medium/Low based on match count, distance, and variance
+- Demo output: "Add validation rule" → 5 SP, 6–13 days, High confidence
+
 ## Phase 3 — Semantic/Vector Search
 - Added src/build_vector_index.py
 - Added chromadb and sentence-transformers to requirements.txt

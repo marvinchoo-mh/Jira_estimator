@@ -30,6 +30,9 @@ Tracks implementation progress by phase.
 ## src/build_vector_index.py
 Builds a ChromaDB vector index from train_knowledge_base.csv using BAAI/bge-small-en-v1.5 embeddings (free, local, no API key). Also provides search_similar_tickets() function for finding similar historical tickets filtered by issue type.
 
+## src/estimate_ticket.py
+Takes a new ticket's details, finds similar historical tickets, and calculates suggested story points (median), cycle time range (25th–75th percentile), and confidence level (High/Medium/Low). Does not use an LLM — purely data-driven.
+
 ## docs/DATA_REPORT.md
 Shows ticket counts before/after cleaning, explains every field we extract (and why), and justifies why we skip the other 564 available Jira fields.
 
