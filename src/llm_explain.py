@@ -207,46 +207,50 @@ def estimate_and_explain(summary, issue_type, description=None, components=None,
 
 def main():
     """
-    Interactive mode: estimate a single ticket from command line input.
+    Interactive mode: estimate tickets from command line input.
+    Loops until you type 'quit' or press Ctrl+C.
     No CSV needed — just type the ticket details.
     """
     print("=" * 60)
     print("JIRA TICKET ESTIMATOR")
     print("=" * 60)
     print()
-    print("Enter new ticket details below.")
-    print("(Press Enter to skip optional fields)")
+    print("Type ticket details to get an estimate.")
+    print("Type 'quit' or press Ctrl+C to exit.")
     print()
 
-    summary = input("Summary (required): ").strip()
-    if not summary:
-        print("ERROR: Summary is required.")
-        return
+    while True:
+        print("-" * 60)
+        summary = input("\nSummary (required, or 'quit' to exit): ").strip()
+        if not summary or summary.lower() == "quit":
+            print("Goodbye.")
+            break
 
-    print("\nAvailable issue types: Tech, Story, Task, Bug, Sub-task")
-    issue_type = input("Issue type (required): ").strip()
-    if not issue_type:
-        print("ERROR: Issue type is required.")
-        return
+        print("\nAvailable issue types: Tech, Story, Task, Bug, Sub-task")
+        issue_type = input("Issue type (required): ").strip()
+        if not issue_type:
+            print("ERROR: Issue type is required. Try again.")
+            continue
 
-    description = input("Description (optional): ").strip() or None
-    components_raw = input("Components (optional, comma-separated): ").strip()
-    components = [c.strip() for c in components_raw.split(",") if c.strip()] or None
-    labels_raw = input("Labels (optional, comma-separated): ").strip()
-    labels = [l.strip() for l in labels_raw.split(",") if l.strip()] or None
+        description = input("Description (optional): ").strip() or None
+        components_raw = input("Components (optional, comma-separated): ").strip()
+        components = [c.strip() for c in components_raw.split(",") if c.strip()] or None
+        labels_raw = input("Labels (optional, comma-separated): ").strip()
+        labels = [l.strip() for l in labels_raw.split(",") if l.strip()] or None
 
-    print("\nEstimating...")
-    print()
+        print("\nEstimating...")
+        print()
 
-    result, explanation = estimate_and_explain(
-        summary=summary,
-        issue_type=issue_type,
-        description=description,
-        components=components,
-        labels=labels,
-    )
+        result, explanation = estimate_and_explain(
+            summary=summary,
+            issue_type=issue_type,
+            description=description,
+            components=components,
+            labels=labels,
+        )
 
-    print(explanation)
+        print(explanation)
+        print()
 
 
 if __name__ == "__main__":
