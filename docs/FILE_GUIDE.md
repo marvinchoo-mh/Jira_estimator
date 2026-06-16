@@ -36,6 +36,9 @@ Takes a new ticket's details, finds similar historical tickets, and calculates s
 ## src/evaluate_estimator.py
 Runs the estimator on all test tickets (data/test_tickets.csv), compares predictions to actual values, and saves per-ticket results to data/evaluation_results.csv. Prints summary metrics (median errors, range accuracy).
 
+## src/llm_explain.py
+Generates human-readable explanations of estimates. Template mode (no API key) always works. LLM mode (with ANTHROPIC_API_KEY) uses Claude for richer reasoning and missing-info suggestions. Also provides interactive CLI to estimate a single new ticket.
+
 ## docs/DATA_REPORT.md
 Shows ticket counts before/after cleaning, explains every field we extract (and why), and justifies why we skip the other 564 available Jira fields.
 

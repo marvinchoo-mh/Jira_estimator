@@ -1,5 +1,12 @@
 # Changelog
 
+## Phase 6 — LLM Explanation
+- Added src/llm_explain.py with template mode + Claude LLM mode
+- Template mode works without any API key (always available)
+- LLM mode uses Anthropic Claude (Bedrock) for richer explanations
+- Added anthropic to requirements.txt
+- Interactive CLI: run `python src/llm_explain.py` to estimate a single ticket
+
 ## Phase 5 — Evaluation on Test Tickets
 - Added src/evaluate_estimator.py
 - Evaluates estimator on 38 test tickets never seen during training
