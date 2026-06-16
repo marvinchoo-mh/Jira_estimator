@@ -1,0 +1,11 @@
+.env
+venv/
+__pycache__/
+*.pyc
+data/raw_jira_issues.json
+data/cleaned_jira_issues.csv
+data/train_knowledge_base.csv
+data/test_tickets.csv
+data/evaluation_results.csv
+chroma_db/
+.faiss/
