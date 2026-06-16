@@ -9,3 +9,4 @@ data/test_tickets.csv
 data/evaluation_results.csv
 chroma_db/
 .faiss/
+hf_cache/

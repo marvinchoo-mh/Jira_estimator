@@ -51,6 +51,7 @@ JIRA_BOARD_ID = os.getenv("JIRA_BOARD_ID")
 
 DATA_DIR = PROJECT_ROOT / "data"
 RAW_JIRA_FILE = DATA_DIR / "raw_jira_issues.json"
+CHROMA_DB_DIR = PROJECT_ROOT / "chroma_db"
 
 # --- Optional environment variables (not required for Phase 1) ---
 

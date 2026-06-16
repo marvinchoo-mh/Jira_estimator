@@ -27,5 +27,11 @@ This file. Explains what each file does in plain English.
 ## docs/CHANGELOG.md
 Tracks implementation progress by phase.
 
+## src/build_vector_index.py
+Builds a ChromaDB vector index from train_knowledge_base.csv using BAAI/bge-small-en-v1.5 embeddings (free, local, no API key). Also provides search_similar_tickets() function for finding similar historical tickets filtered by issue type.
+
+## docs/DATA_REPORT.md
+Shows ticket counts before/after cleaning, explains every field we extract (and why), and justifies why we skip the other 564 available Jira fields.
+
 ## docs/DECISIONS.md
 Explains why important design choices were made.

@@ -32,6 +32,14 @@ Tickets left open for months are usually forgotten or administratively stale, no
 Reason:
 Board 520 returns descriptions as plain text with Jira wiki markup (not ADF). Phase 2 stores it as-is in combined_text; the markup doesn't significantly affect embedding quality for semantic search.
 
+## Decision: Use BAAI/bge-small-en-v1.5 for embeddings
+Reason:
+Free and local — no API key, no API costs, no rate limits. Specifically trained for retrieval/search tasks (better than general-purpose models at finding similar documents). Small (130MB, 384 dimensions) and fast on CPU for our 151-ticket dataset. Can be swapped for a larger model later if needed.
+
+## Decision: Use ChromaDB over FAISS for vector storage
+Reason:
+ChromaDB has built-in metadata filtering which we need for issue_type matching (Stories only retrieve Stories, etc). It also integrates directly with sentence-transformers for local embedding, persists to disk automatically, and doesn't require manual embedding management like FAISS would.
+
 ## Decision: Compare same issue types only
 Reason:
 Stories, Tasks, Bugs, and Sub-tasks represent different types of work. Mixing them may produce misleading estimates.

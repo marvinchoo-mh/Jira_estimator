@@ -1,5 +1,14 @@
 # Changelog
 
+## Phase 3 — Semantic/Vector Search
+- Added src/build_vector_index.py
+- Added chromadb and sentence-transformers to requirements.txt
+- Using BAAI/bge-small-en-v1.5 embedding model (free, local, no API key)
+- Built ChromaDB persistent vector index from train_knowledge_base.csv (151 tickets)
+- Provides search_similar_tickets() with issue_type metadata filtering
+- Added CHROMA_DB_DIR to config.py
+- Added hf_cache/ to .gitignore
+
 ## Phase 2 — Data Cleaning and Train/Test Split
 - Added src/clean_jira_data.py
 - Added src/split_train_test.py
