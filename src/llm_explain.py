@@ -221,10 +221,12 @@ def main():
 
     while True:
         print("-" * 60)
-        summary = input("\nSummary (required, or 'quit' to exit): ").strip()
-        if not summary or summary.lower() == "quit":
-            print("Goodbye.")
-            break
+        print()
+
+        summary = input("Summary (required): ").strip()
+        if not summary:
+            print("ERROR: Summary is required. Try again.")
+            continue
 
         print("\nAvailable issue types: Tech, Story, Task, Bug, Sub-task")
         issue_type = input("Issue type (required): ").strip()
@@ -250,6 +252,16 @@ def main():
         )
 
         print(explanation)
+        print()
+        print("=" * 60)
+        print("-------------- DONE --------------")
+        print("=" * 60)
+        print()
+
+        choice = input("Continue or quit? (c/q): ").strip().lower()
+        if choice in ("q", "quit"):
+            print("Goodbye.")
+            break
         print()
 
 
