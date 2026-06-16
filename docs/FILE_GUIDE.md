@@ -33,6 +33,9 @@ Builds a ChromaDB vector index from train_knowledge_base.csv using BAAI/bge-smal
 ## src/estimate_ticket.py
 Takes a new ticket's details, finds similar historical tickets, and calculates suggested story points (median), cycle time range (25th–75th percentile), and confidence level (High/Medium/Low). Does not use an LLM — purely data-driven.
 
+## src/evaluate_estimator.py
+Runs the estimator on all test tickets (data/test_tickets.csv), compares predictions to actual values, and saves per-ticket results to data/evaluation_results.csv. Prints summary metrics (median errors, range accuracy).
+
 ## docs/DATA_REPORT.md
 Shows ticket counts before/after cleaning, explains every field we extract (and why), and justifies why we skip the other 564 available Jira fields.
 

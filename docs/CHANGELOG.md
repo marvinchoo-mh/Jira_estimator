@@ -1,5 +1,13 @@
 # Changelog
 
+## Phase 5 — Evaluation on Test Tickets
+- Added src/evaluate_estimator.py
+- Evaluates estimator on 38 test tickets never seen during training
+- Saves per-ticket results to data/evaluation_results.csv
+- Results: Median SP error = 1.0, Exact SP matches = 5/11 (45%)
+- Results: Median CT error = 2.0 days, Range accuracy = 31%
+- 22/38 tickets got "Low" confidence (mostly Stories with no training data)
+
 ## Phase 4 — Estimation Logic
 - Added src/estimate_ticket.py
 - Calculates suggested story points via median of similar tickets
