@@ -16,9 +16,21 @@ The story points field in Jira is typically a custom field (e.g. customfield_100
 Reason:
 The changelog contains status transition timestamps needed to calculate cycle time in Phase 2. Extracting it now avoids re-fetching all issues later.
 
-## Decision: Store raw description as-is (ADF format)
+## Decision: Match all "in progress" status variants for cycle time start
 Reason:
-Jira Cloud returns descriptions in Atlassian Document Format (ADF), a JSON structure. Phase 1 stores it raw; Phase 2 will convert it to plain text during cleaning.
+Board 520 uses multiple status names that mean active work: "Dev In Progress", "In Progress", "In Progress / Dev". Rather than hardcoding one specific status, we match any status containing "in progress" (case-insensitive). This catches all workflow variants and adapts if the board adds new statuses in the future. The matching logic is clearly commented in clean_jira_data.py with the known variants listed.
+
+## Decision: Exclude tickets where Done came before In Progress
+Reason:
+Some tickets have inconsistent changelog data (e.g. moved to Done then later moved to In Progress by mistake). These produce negative or zero cycle times and are excluded as bad data.
+
+## Decision: Cap cycle time outliers at 90 working days
+Reason:
+Tickets left open for months are usually forgotten or administratively stale, not representative of actual work effort. 90 working days (~4.5 months) is a generous upper bound for the MVP.
+
+## Decision: Store raw description as-is (plain text with Jira markup)
+Reason:
+Board 520 returns descriptions as plain text with Jira wiki markup (not ADF). Phase 2 stores it as-is in combined_text; the markup doesn't significantly affect embedding quality for semantic search.
 
 ## Decision: Compare same issue types only
 Reason:
