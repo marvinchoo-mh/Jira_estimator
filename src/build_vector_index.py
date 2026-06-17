@@ -144,14 +144,31 @@ def build_index():
     print("\nVector index build complete.")
 
 
+# ============================================================================
+# ISSUE TYPE GROUPING
+#
+# Tech and Story are treated as equivalent for similarity matching because
+# on board 520 they represent the same kind of work (feature implementation,
+# code changes). The distinction is often arbitrary — the same work might be
+# logged as "Tech" or "Story" depending on who created the ticket.
+#
+# This means: a new Story will also retrieve similar Tech tickets, and vice versa.
+# Other types (Task, Bug, Sub-task) remain separate.
+# ============================================================================
+ISSUE_TYPE_GROUPS = {
+    "Tech": ["Tech", "Story"],
+    "Story": ["Tech", "Story"],
+}
+
+
 def search_similar_tickets(combined_text, issue_type, top_k=5):
     """
     Search for similar historical tickets in the vector index.
 
     Args:
         combined_text: The combined_text of the new ticket to find matches for.
-        issue_type: Filter results to only this issue type
-                    (Story matches Stories, Task matches Tasks, etc.)
+        issue_type: Filter results to this issue type (or its group —
+                    Tech and Story are treated as equivalent).
         top_k: Number of similar tickets to return.
 
     Returns:
@@ -160,10 +177,17 @@ def search_similar_tickets(combined_text, issue_type, top_k=5):
     """
     collection = get_collection()
 
+    # Check if this type belongs to a group (Tech/Story share results)
+    type_group = ISSUE_TYPE_GROUPS.get(issue_type)
+    if type_group:
+        where_filter = {"issue_type": {"$in": type_group}}
+    else:
+        where_filter = {"issue_type": issue_type}
+
     results = collection.query(
         query_texts=[combined_text],
         n_results=top_k,
-        where={"issue_type": issue_type},
+        where=where_filter,
         include=["documents", "metadatas", "distances"],
     )
 
