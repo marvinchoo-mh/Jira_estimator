@@ -11,9 +11,33 @@ This script does not use an LLM. It calculates estimates purely from
 the retrieved similar tickets' actual data.
 """
 
+import csv
 import statistics
 
 from build_vector_index import search_similar_tickets
+from config import DATA_DIR
+
+TRAIN_FILE = DATA_DIR / "train_knowledge_base.csv"
+
+
+def _get_training_fallback_stats():
+    """
+    Calculate fallback stats from the full training set.
+    Used when similar tickets are found but none have story points.
+    """
+    sp_values = []
+    ct_values = []
+    with open(TRAIN_FILE, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            if row.get("story_points"):
+                sp_values.append(float(row["story_points"]))
+            if row.get("cycle_time_working_days"):
+                ct_values.append(int(row["cycle_time_working_days"]))
+    return {
+        "median_sp": statistics.median(sp_values) if sp_values else None,
+        "median_ct": statistics.median(ct_values) if ct_values else None,
+    }
 
 
 def build_combined_text(issue_type, summary, description=None, components=None,
@@ -110,7 +134,12 @@ def estimate_ticket(summary, issue_type, description=None, components=None,
 
     # Story points: median of similar tickets that have valid story points
     sp_values = [t["story_points"] for t in similar_tickets if t["story_points"] is not None]
-    suggested_sp = statistics.median(sp_values) if sp_values else None
+    if sp_values:
+        suggested_sp = statistics.median(sp_values)
+    else:
+        # Fallback: use median SP from entire training set
+        fallback = _get_training_fallback_stats()
+        suggested_sp = fallback["median_sp"]
 
     # Cycle time: 25th–75th percentile range
     ct_values = [t["cycle_time_working_days"] for t in similar_tickets if t["cycle_time_working_days"] is not None]

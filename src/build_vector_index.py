@@ -147,17 +147,19 @@ def build_index():
 # ============================================================================
 # ISSUE TYPE GROUPING
 #
-# Tech and Story are treated as equivalent for similarity matching because
-# on board 520 they represent the same kind of work (feature implementation,
-# code changes). The distinction is often arbitrary — the same work might be
-# logged as "Tech" or "Story" depending on who created the ticket.
+# Tech, Story, and P2 User Story are treated as equivalent for similarity
+# matching because on board 520 they represent the same kind of work (feature
+# implementation, code changes). The distinction is often arbitrary.
 #
 # This means: a new Story will also retrieve similar Tech tickets, and vice versa.
 # Other types (Task, Bug, Sub-task) remain separate.
+# Types with no training data at all (Epic, Spike) fall back to searching
+# ALL types rather than returning nothing.
 # ============================================================================
 ISSUE_TYPE_GROUPS = {
-    "Tech": ["Tech", "Story"],
-    "Story": ["Tech", "Story"],
+    "Tech": ["Tech", "Story", "P2 User Story"],
+    "Story": ["Tech", "Story", "P2 User Story"],
+    "P2 User Story": ["Tech", "Story", "P2 User Story"],
 }
 
 
@@ -177,7 +179,7 @@ def search_similar_tickets(combined_text, issue_type, top_k=5):
     """
     collection = get_collection()
 
-    # Check if this type belongs to a group (Tech/Story share results)
+    # Check if this type belongs to a group (Tech/Story/P2 User Story share results)
     type_group = ISSUE_TYPE_GROUPS.get(issue_type)
     if type_group:
         where_filter = {"issue_type": {"$in": type_group}}
@@ -191,6 +193,22 @@ def search_similar_tickets(combined_text, issue_type, top_k=5):
         include=["documents", "metadatas", "distances"],
     )
 
+    similar_tickets = _extract_results(results)
+
+    # Fallback: if no results found (unknown type like Epic/Spike), search ALL types
+    if not similar_tickets:
+        results = collection.query(
+            query_texts=[combined_text],
+            n_results=top_k,
+            include=["documents", "metadatas", "distances"],
+        )
+        similar_tickets = _extract_results(results)
+
+    return similar_tickets
+
+
+def _extract_results(results):
+    """Extract ticket data from ChromaDB query results."""
     similar_tickets = []
     if results and results["ids"] and results["ids"][0]:
         for i, ticket_id in enumerate(results["ids"][0]):
