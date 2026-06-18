@@ -2,8 +2,8 @@
 
 ## Test Setup
 
-- **Training set:** 151 tickets (older completed tickets, indexed in vector DB)
-- **Test set:** 38 tickets (newer completed tickets, never seen by the estimator)
+- **Training set:** 162 tickets (older completed tickets, indexed in vector DB)
+- **Test set:** 41 tickets (newer completed tickets, never seen by the estimator)
 - **Method:** For each test ticket, pretend it's brand new → estimate SP + cycle time → compare to actual values
 
 ---
@@ -14,27 +14,27 @@
 
 | Metric | Value |
 |--------|-------|
-| Test tickets with actual SP to compare | 33 out of 38 |
-| **Average error** | **2.1 story points off** |
-| Exact matches (predicted = actual) | 9 out of 33 (27%) |
+| Test tickets with actual SP to compare | 26 out of 41 |
+| **Average error** | **2.0 story points off** |
+| Exact matches (predicted = actual) | 8 out of 26 (31%) |
 
-**What this means:** On average, the estimator's story point prediction is off by about 2 points. For example, if the real answer is 5 SP, it might predict 3 SP. Over a quarter of the time it gets the exact right answer.
+**What this means:** On average, the estimator's story point prediction is off by about 2 points. For example, if the real answer is 5 SP, it might predict 3 SP. Almost a third of the time it gets the exact right answer.
 
 ### Cycle Time Prediction
 
 | Metric | Value |
 |--------|-------|
-| Test tickets with CT prediction | 38 out of 38 (all of them) |
-| **Average error** | **4.3 working days off** |
-| Actual fell inside predicted range | 13 out of 38 (34%) |
+| Test tickets with CT prediction | 41 out of 41 (all of them) |
+| **Average error** | **7.2 working days off** |
+| Actual fell inside predicted range | 8 out of 41 (20%) |
 
-**What this means:** On average, the predicted cycle time is off by about 4 working days. The large average is skewed by a few tickets that took 30-47 days (likely blocked or forgotten in Jira). For most normal tickets, the error is 1-2 days.
+**What this means:** On average, the predicted cycle time is off by about 7 working days. This is inflated by tickets that took 22-47 days (likely blocked or forgotten in Jira). For typical tickets that complete within 1-2 weeks, the error is much smaller.
 
 ### Simple Summary for Stakeholders
 
-> **Story points:** The tool predicts within ~2 story points of the actual value, and gets it exactly right 27% of the time.
+> **Story points:** The tool predicts within ~2 story points of the actual value, and gets it exactly right 31% of the time.
 >
-> **Cycle time:** The tool predicts within ~4 working days on average. Outlier tickets (left open for weeks due to blockers) inflate this number. For typical tickets, it's off by 1-2 days.
+> **Cycle time:** The tool predicts within ~7 working days on average. This number is inflated by a few outlier tickets that were blocked for weeks. For normal tickets, predictions are closer.
 >
 > **Coverage:** Every ticket gets a prediction — no blank outputs.
 
@@ -42,8 +42,8 @@
 
 | Level | Count | Meaning |
 |-------|-------|---------|
-| High | 14 | Many close matches, low variance |
-| Medium | 24 | Reasonable matches, moderate variance |
+| High | 26 | Many close matches, low variance |
+| Medium | 15 | Reasonable matches, moderate variance |
 | Low | 0 | No matches found |
 
 ---
@@ -108,13 +108,13 @@ If similar tickets are found but **none of them have story points**, the estimat
 
 ## Accuracy Evolution (Version History)
 
-| Version | Change | SP Predictions | Median SP Error | CT Predictions | Median CT Error | Range Accuracy |
-|---------|--------|----------------|-----------------|----------------|-----------------|----------------|
-| V1 | Strict same-type matching | 11/38 | 1.0 | 16/38 | 2.0 days | 31% |
-| V2 | Tech + Story grouped | 33/38 | 2.0 | 38/38 | 1.0 days | 34% |
-| V3 | + P2 group + all-types fallback + SP fallback | 33/38 | 2.0 | 38/38 | 1.0 days | 34% |
+| Version | Change | SP Predictions | Avg SP Error | CT Predictions | Avg CT Error | Range Accuracy |
+|---------|--------|----------------|--------------|----------------|--------------|----------------|
+| V1 | Strict same-type matching | 11/38 | 1.5 | 16/38 | 4.1 days | 31% |
+| V2 | Tech + Story grouped | 33/38 | 2.1 | 38/38 | 4.3 days | 34% |
+| V3 (current) | + P2 group + all-types fallback + SP fallback | 26/41 | 2.0 | 41/41 | 7.2 days | 20% |
 
-**Key insight:** Grouping Tech + Story was the biggest improvement — it went from 11 to 33 predictions and eliminated all "Low confidence" results. The fallback layers don't affect the test set much (no Epic/Spike in test data) but ensure the tool never returns blank for real-world usage.
+**Key insight:** Grouping Tech + Story was the biggest improvement — it eliminated all "Low confidence" results. The higher CT error in V3 is due to fresh test data containing more long-running tickets (10-22 days) that are harder to predict. Every ticket now gets a prediction regardless of type.
 
 ---
 
